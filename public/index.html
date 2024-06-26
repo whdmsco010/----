@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Lora">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            background: #CBC0D3;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .container {
+            margin: auto;
+            width: 650px;
+            height: 550px;
+            position: relative;
+        }
+
+        .welcome {
+            background: #f6f6f6;
+            width: 650px;
+            height: 415px;
+            position: absolute;
+            top: 25%;
+            border-radius: 5px;
+            box-shadow: 5px 5px 5px rgba(0,0,0,.1);
+        }
+        .img {
+            position: absolute;
+            width: 40%;
+            height: 40%;
+            top: 10%;
+            left: 5%;
+        }
+        #talk {
+            position: absolute;
+            white-space: pre-line; /* 여러 줄 텍스트 처리 */
+            text-align: center;
+            font-size: medium;
+            top: 55%;
+            left: 6%;
+        }
+        #stalk {
+            position: absolute;
+            text-align: center;
+            font-size: xx-large;
+            top: 70%;
+            left: 5%;
+            color: #ff618b;
+            font-weight: bolder;
+        }
+        .title {
+            font-family: 'Open Sans', sans-serif;
+            color: #8E9AAF;
+            position: absolute;
+            right: 11%;
+            font-size: 1.8em;
+            line-height: 1.1em;
+            letter-spacing: 3px;
+            text-align: center;
+            font-weight: 300;
+            margin-top: 20%;
+            }
+
+        .pinkbox {
+            position: absolute;
+            top: -10%;
+            left: 5%;
+            background: #EAC7CC;
+            width: 320px;
+            height: 500px;
+            border-radius: 5px;
+            box-shadow: 2px 0 10px rgba(0,0,0,.1);
+            transition: all .5s ease-in-out;
+            z-index: 2;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .move-right {
+            left: calc(100% - 325px);
+        }
+
+        .start-button {
+            position: absolute;
+            bottom: 10px;
+            left: 130px;
+            padding: 12px 20px;
+            font-family: 'Open Sans', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 11px;
+            border-radius: 10px;
+            background: black;
+            color: #ff618b;
+            border: none;
+            cursor: pointer;
+            transition: background-color 1s ease-out;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            color: #8E9AAF;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-family: 'Lora', serif;
+            color: #8E9AAF;
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="file"], input[type="radio"] {
+            font-family: 'Open Sans', sans-serif;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #8E9AAF;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        input[type="radio"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 12px;
+            font-family: 'Open Sans', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 11px;
+            border-radius: 10px;
+            margin-top: 20px;
+            background: #CBC0D3;
+            color: #f6f6f6;
+            border: none;
+            cursor: pointer;
+            transition: background-color 1s ease-out;
+        }
+
+        button:hover {
+            background: #8E9AAF;
+            color: #EAC7CC;
+        }
+
+        .radio-group {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        .radio-group label {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="welcome">        
+            <h3 class="title"><span>What is</span><br>my hobby?</h2>
+            <img class=img src="img/중성마녀시작.png">
+            <a id="talk">얘야, 인생이란 원래
+                자기 생각대로 되지 않는 법이란다.</a>
+            <a id = "stalk">핸더랜드의 대모험</a>
+            <div class="pinkbox" id="pinkbox">
+                <h2>본인인증</h2>
+                <form id="signup-form" enctype="multipart/form-data" method="POST">
+                    <label for="name">이름(별명)</label>
+                    <input type="text" id="name" name="name" required>
+                    
+                    <label for="username">학번(9자리)</label>
+                    <input type="text" id="username" name="username" required pattern="\d{9}"> <!-- 아이디를 9자리로 제한 -->
+
+                    <label for="studentCard">학생증 사진(QR코드 제외 첨부)</label>
+                    <input type="file" id="studentCard" name="studentCard" accept="image/*" required>
+
+                    <label id="instrument-label">선호하는 악기</label>
+                    <div class="radio-group">
+                        <input type="radio" id="piano" name="instrument" value="piano" required>
+                        <label for="piano">피아노</label>
+                        
+                        <input type="radio" id="drums" name="instrument" value="drum">
+                        <label for="drums">드럼</label>
+                    </div>
+
+                    <button type="button" id="submit-button" disabled>제출</button>
+                </form>
+            </div>
+        </div>
+        
+        <button id="start-button" class="start-button">시작</button>
+    </div>
+    <script>
+        // 오디오 요소 추가
+        const audio = new Audio('조커뽑기 사운드/중성마녀춤.mp3');
+
+        document.getElementById('submit-button').addEventListener('click', () => {
+            const pinkbox = document.getElementById('pinkbox');
+            pinkbox.classList.add('move-right');
+            const startButton = document.getElementById('start-button');
+            startButton.classList.add('show');
+
+            // 클릭 시 배경색 및 글자색 변경
+            pinkbox.style.backgroundColor = '#ff618b';
+            // h2 요소의 색상 변경
+            const h2 = document.querySelector('h2');
+            h2.style.color = 'black';
+            // 입력 요소의 테두리 색상 변경
+            const inputs = document.querySelectorAll('input[type="text"], input[type="file"], input[type="radio"]');
+            inputs.forEach(input => {
+                input.style.borderColor = 'black';
+            });
+            // 라벨의 색상 변경
+            const labels = document.querySelectorAll('label');
+            labels.forEach(label => {
+                label.style.color = 'black'; //#4C5267
+            });
+            // body 배경색 변경
+            document.body.style.backgroundColor = 'black';
+            // 선호하는 악기 라벨 텍스트 변경
+            const instrumentLabel = document.getElementById('instrument-label');
+            instrumentLabel.textContent = '중성마녀와의 대결에 사용할 악기♡';
+            instrumentLabel.style.color = 'white';
+            instrumentLabel.style.fontWeight = 'bold';
+
+            // 오디오 재생
+            audio.play();
+        });
+
+        document.getElementById('start-button').addEventListener('click', async () => {
+            const form = document.getElementById('signup-form');
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.text();
+                alert(result);
+
+                if (response.ok) {
+                    const name = document.getElementById('name').value;
+                    const encodedName = encodeURIComponent(name);
+                    const instrument = document.querySelector('input[name="instrument"]:checked').value;
+                    window.location.href = `${instrument}.html?name=${encodedName}`;
+                } else {
+                    console.log('Error: ' + result);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        const nameInput = document.getElementById('name');
+        const usernameInput = document.getElementById('username');
+        const studentCardInput = document.getElementById('studentCard');
+        const instrumentInputs = document.querySelectorAll('input[name="instrument"]');
+        const submitButton = document.getElementById('submit-button');
+
+        function checkFormValidity() {
+            const isValid = nameInput.validity.valid &&
+                            usernameInput.validity.valid &&
+                            studentCardInput.validity.valid &&
+                            (instrumentInputs[0].checked || instrumentInputs[1].checked);
+
+            submitButton.disabled = !isValid;
+        }
+
+        nameInput.addEventListener('input', checkFormValidity);
+        usernameInput.addEventListener('input', checkFormValidity);
+        studentCardInput.addEventListener('change', checkFormValidity);
+
+        instrumentInputs.forEach(input => {
+            input.addEventListener('change', checkFormValidity);
+        });
+    </script>
+</body>
+</html>

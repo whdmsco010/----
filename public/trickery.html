@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Lora">
+  <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+  <title>조커 야바위</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: black;
+      font-family: Arial, sans-serif;
+    }
+
+    #game-screen {
+    background-image: url('img/야바위 배경.jpg'); /* 배경 이미지 추가 */
+    background-size: cover; /* 배경 이미지를 화면에 맞춤 */
+    background-position: center; /* 배경 이미지를 가운데 정렬 */
+    width: 70%;
+    height: 80vh;
+    margin-bottom: 20px;
+    }
+
+    #game {
+      top: 40%;
+      left: 35.3%;
+      position: relative;
+    }
+
+    .card {
+      width: 65px;
+      height: 100px;
+      position: absolute;
+      cursor: pointer;
+      transition: left 0.3s ease-in-out;
+    }
+    
+    .card img {
+      width: 90%;
+      height: 90%;
+      border-radius: 5px;
+      border: 7px solid #7D1B7E;
+      object-fit: cover;
+    }
+    .card img.front {
+          display: none;
+          border: 7px solid white; /* cup 카드의 앞면 테두리를 흰색으로 설정 */
+    }
+
+    .card.joker img.front {
+      border: 7px solid #ed433d; /* joker 카드의 테두리를 빨강으로 설정 */
+    }
+
+    .card.show img.front {
+      display: block;
+    }
+
+    .card.show img.back {
+      display: none;
+    }
+
+    #attemptCounter {
+      margin-bottom: 20px;
+      font-size: 1.2em;
+      color: #ff618b;
+    }
+
+    #startBtn {
+      font-family: 'Open Sans', sans-serif;
+      letter-spacing: 2px;
+      font-size: 20px;
+      background-color: black;
+      color: #ff618b;
+      border: solid 2px;
+    }
+  </style>
+</head>
+<body>
+  <div id="attemptCounter">시도 횟수: 0 / 5</div>
+  <div id="game-screen">
+    <div id="game">
+    <div class="card" id="card1" style="left: 0;">
+      <img src="img/card.png" alt="카드 뒷면" class="back">
+      <img src="img/fcard.jpg" alt="카드 앞면" class="front">
+    </div>
+    <div class="card" id="card2" style="left: 125px;">
+      <img src="img/card.png" alt="카드 뒷면" class="back">
+      <img src="img/fcard.jpg" alt="카드 앞면" class="front">
+    </div>
+    <div class="card" id="card3" style="left: 250px;">
+      <img src="img/card.png" alt="카드 뒷면" class="back">
+      <img src="img/fcard.jpg" alt="카드 앞면" class="front">
+    </div>
+   </div>
+  </div>
+  <button id="startBtn">게임 시작</button>
+
+  <audio id="audioPlayer" autoplay>
+    <source src="조커뽑기 사운드/조커뽑기.mp3" type="audio/mp3">
+    Your browser does not support the audio tag.
+  </audio>
+
+  <audio id="loopPlayer" loop>
+    <source src="조커뽑기 사운드/조커브금.mp3" type="audio/mp3">
+    Your browser does not support the audio tag.
+  </audio>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const audioPlayer = document.getElementById('loopPlayer');
+      const startBtn = document.getElementById('startBtn');
+
+      startBtn.addEventListener('click', () => {
+        if (audioPlayer.paused) {
+          audioPlayer.currentTime = 0; // 오디오를 처음으로 되감고 재생
+          audioPlayer.play();
+        }
+      });
+    });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const cards = document.querySelectorAll('.card');
+      const startBtn = document.getElementById('startBtn');
+      const attemptCounter = document.getElementById('attemptCounter');
+      let specialCardPosition = 0;
+      let shuffling = false;
+      let attempts = 0;
+      let gameStarted = false; // 게임 시작 여부를 저장하는 변수
+
+      startBtn.addEventListener('click', () => {
+        if (!gameStarted) { // 게임이 시작되지 않은 상태에서만 게임 시작
+          gameStarted = true;
+          startGame();
+        }
+      });
+
+      cards.forEach((card, index) => {
+        card.addEventListener('click', () => {
+          if (gameStarted && !shuffling) { // 게임이 시작되었고, 섞기가 진행 중이지 않을 때만 클릭 처리
+            attempts++;
+            updateAttemptCounter();
+            const cardIndex = Array.from(cards).indexOf(card); // 클릭된 카드의 인덱스 확인
+            if (cardIndex === specialCardPosition) {
+              alert("당신은 조커 카드를 찾았습니다!");
+              showAllCards();
+              gameStarted = false; // 게임 종료 상태로 설정
+              setTimeout(() => {
+                window.location.href = "invisible_destination.html";
+              }, 2000); // 2초 후 이동
+            } else {
+              if (attempts < 5) {
+                alert("다시 시도하세요!");
+                showAllCards();
+                setTimeout(() => {
+                  startGame();
+                }, 3000);
+              } else {
+                alert("휴 이번만 봐준다:)");
+                showAllCards();
+                gameStarted = false; // 게임 종료 상태로 설정
+                setTimeout(() => {
+                  window.location.href = "invisible_destination.html";
+                }, 2000); // 2초 후 이동
+              }
+            }
+          }
+        });
+      });
+
+      function startGame() {
+        shuffling = true;
+        hideCards();
+        setTimeout(() => {
+          showSpecialCard();
+          setTimeout(() => {
+            hideCards();
+            setTimeout(() => {
+              shuffleCards();
+            }, 1000);
+          }, 3000);
+        }, 1000);
+      }
+
+      function showSpecialCard() {
+        hideCards(); // 모든 카드 숨기기
+        specialCardPosition = Math.floor(Math.random() * 3);
+        cards.forEach(card => {
+          card.querySelector('.front').src = "img/fcard.jpg";
+          card.classList.remove('joker'); // 이전에 추가된 'joker' 클래스 제거
+        });
+        cards[specialCardPosition].querySelector('.front').src = "img/joker.png";
+        cards[specialCardPosition].classList.add('joker', 'show'); // joker 카드 표시 및 클래스 추가
+      }
+
+      function showAllCards() {
+        cards.forEach(card => card.classList.add('show'));
+      }
+
+      function hideCards() {
+        cards.forEach(card => card.classList.remove('show'));
+      }
+
+      function shuffleCards() {
+        const shuffleCount = 20;
+        let currentShuffle = 0;
+
+        const shuffleInterval = setInterval(() => {
+          if (currentShuffle >= shuffleCount) {
+            clearInterval(shuffleInterval);
+            shuffling = false;
+            return;
+          }
+          swapCards();
+          currentShuffle++;
+        }, 500);
+      }
+
+      function swapCards() {
+        const positions = [0, 1, 2];
+        const [pos1, pos2] = positions.sort(() => Math.random() - 0.5).slice(0, 2);
+
+        const card1 = cards[pos1];
+        const card2 = cards[pos2];
+
+        // 카드 요소를 직접 변경
+        const card1Left = card1.style.left;
+        const card2Left = card2.style.left;
+
+        card1.style.left = card2Left;
+        card2.style.left = card1Left;
+
+        // 배열에서도 위치 변경
+        const temp = cards[pos1];
+        cards[pos1] = cards[pos2];
+        cards[pos2] = temp;
+      }
+
+      function updateAttemptCounter() {
+        attemptCounter.textContent = `시도 횟수: ${attempts} / 5`;
+      }
+    });
+  </script>
+</body>
+</html>

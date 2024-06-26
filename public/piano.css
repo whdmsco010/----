@@ -1,0 +1,78 @@
+body {
+  text-align: center;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+              url("img/피아노 건반.png");
+  background-size: 100%;
+  background-position: bottom;
+  background-repeat: no-repeat;
+  /* min-height: 100vh; 화면 전체 높이를 최소로 설정 */
+}
+  h1 {
+    display: inline-block;
+    padding: 1rem;
+    background: #CBC0D3;
+    font-weight: 900;
+  }
+  ul {
+    padding: 0;
+    margin: 0;
+  }
+  li {
+    display: inline-block;
+    width: 5rem;
+    height: 5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #f3f3f3;
+    border-radius: 15px;
+    padding: 1rem;
+    transition: all 0.5s ease-in-out;
+    margin: 5rem 2.1rem;
+  }
+  
+
+  li.playing {
+    transform: scale(0.8);
+    box-shadow: 0px 0px 10px 5px rgba(255, 255, 255, 1);
+  }
+  li img {
+    width: 110px;
+    border-radius: 50%;
+  }
+  li span {
+    color: white;
+    font-weight: 900;
+    font-size: 5rem;
+  }
+  
+  p {
+    color: white;
+    font-weight: 900;
+    font-size: 2rem;
+  }
+
+  /* 추가된 스타일: 버튼 배치 */
+  #reChangeButton {
+    position: absolute;
+    bottom: 0px;
+    left: 20px;
+    background: #CBC0D3;
+    color: #f6f6f6;
+  }
+
+  #nextButton {
+      position: absolute;
+      bottom: 0px;
+      right: 20px;
+      background: #CBC0D3;
+      color: #f6f6f6;
+  }
+
+  button {
+    font-family: 'Open Sans', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 15px;
+    border-radius: 10px;
+  }

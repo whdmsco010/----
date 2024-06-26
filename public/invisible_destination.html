@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="img/favicon.ico" type="image/x-icon">
+<title>목적지 도착하기</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: black;
+  }
+  #game-screen {
+    background-image: url('img/목적지 배경.jpg'); /* 배경 이미지 추가 */
+    background-size: cover; /* 배경 이미지를 화면에 맞춤 */
+    background-position: center; /* 배경 이미지를 가운데 정렬 */
+    width: 70%;
+    height: 80vh;
+    position: relative;
+    visibility: visible; /* 초기에는 게임 화면이 보임 */
+    transition: background-image 1s ease-in-out; /* 배경 이미지 전환 트랜지션 */
+  }
+  #bigjoma {
+    position: absolute;
+    visibility: hidden;
+  }
+  #joma {
+    position: absolute;
+    left: -50px;
+  }
+  #player {
+    width: 100px; /* 이미지 크기에 맞게 조정 */
+    height: 90px; /* 이미지 크기에 맞게 조정 */
+    position: absolute;
+    left: 50px;
+    bottom: 50px;
+  }
+  #player img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  #destination {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    right: 50px;
+    bottom: 80px;
+  }
+  #destination img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  #flag {
+    visibility: hidden; /* display: none;을 하면 화면에서 안보이며, 거리 측정도 불가 */
+    width: 15px;
+    height: 15px;
+    background-color: #ff618b;
+    position: absolute;
+    right: 300px;
+    bottom: 50px;
+  }
+  #flag img {
+    width: 70%;
+    height: 70%;
+    object-fit: cover;
+  }
+  #message {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 2px solid black;
+    font-size: 24px;
+    z-index: 1000; /* 화면의 최상위에 위치 */
+  }
+  #message1 {
+    display: none;
+    position: absolute;
+    top: 57%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ff618b;
+    font-size: 14px;
+    z-index: 1000; /* 화면의 최상위에 위치 */
+  }
+  /* 오디오 요소 숨기기 */
+  #audioPlayer {
+    display: none;
+  }
+</style>
+</head>
+<body>
+<div id="game-screen">
+  <div id="bigjoma">
+    <img src="img/조마카오.png" alt="조마카오">
+  </div>
+  <div id="joma">
+    <img src="img/시작조마카오.png" alt="시작조마카오">
+  </div>
+  <div id="destination">
+    <img src="img/목적지.png" alt="목적지">
+  </div>
+  <div id="flag"></div>
+  <div id="player">
+    <img src="img/짱구.png" alt="짱구">
+  </div>
+</div>
+<!-- 메시지 박스 추가 -->
+<div id="message">목적지까지 얼마나 남았게~???</div> 
+<div id="message1">목적지에 최대한 가까이 도달하세요</div> 
+
+<!-- 이전에 자신이 녹음 했던 음악 중 가장 최신 파일이 자동 bgm으로 출력 -->
+<audio id="audioPlayer" autoplay controls loop>
+  <source src="/latest-mp3" type="audio/mp3">
+  Your browser does not support the audio tag.
+</audio>
+
+<script>
+  const player = document.getElementById('player');
+  const destination = document.getElementById('destination');
+  const flag = document.getElementById('flag');
+  const gameScreen = document.getElementById('game-screen');
+  const message = document.getElementById('message'); // 메시지 엘리먼트 추가
+  const message1 = document.getElementById('message1'); // 메시지 엘리먼트 추가
+
+  let playerLeft = 150; // 초기 좌측 위치
+  let playerBottom = 50; // 초기 하단 위치
+  let autoMoveInterval; // 자동 이동을 위한 인터벌 저장
+
+  // const destinationRight = gameScreen.offsetWidth - destination.offsetWidth;
+  const destinationRight = destination.offsetLeft + destination.offsetWidth;
+  const flagRight = flag.offsetLeft + flag.offsetWidth;
+
+  const centerThreshold = gameScreen.offsetWidth * 2 / 5 - player.offsetWidth / 2; // 2 / 5 위치 임계값
+
+  let isMoving = true; // 플레이어 자동 이동 상태 (기본값은 true로 설정)
+
+  player.style.bottom = `${playerBottom}px`;
+  player.style.left = `${playerLeft}px`;
+
+  // 자동으로 플레이어 이동 함수
+  function autoMovePlayer() {
+    if (!isMoving) return; // 자동 이동 중지 상태라면 종료
+
+    movePlayerHorizontal(10); // 오른쪽으로 일정 거리만큼 이동
+  }
+
+  // 가로 방향으로 플레이어 이동 함수
+  function movePlayerHorizontal(distance) {
+    playerLeft += distance;
+    // 게임 화면 내에서 플레이어 위치 제한
+    playerLeft = Math.max(playerLeft, 0);
+    playerLeft = Math.min(playerLeft, gameScreen.offsetWidth - player.offsetWidth);
+
+    player.style.left = `${playerLeft}px`;
+
+    // 플레이어가 화면의 2 / 5를 지나면 화면 숨기기
+    if (playerLeft > centerThreshold) {
+      hideGameScreen(); // 화면을 숨기기
+    }
+
+    // 플레이어가 목적지를  지나면 게임 오버 처리
+    if (playerLeft + player.offsetWidth > destinationRight) {
+      gameOver();
+    }
+  }
+
+  // 목적지를 지나거나 깃발 이전에 정지했을 때 처리 함수
+  function gameOver() {
+    alert('죽음!'); // 게임 오버 메시지 표시
+    stopPlayer(); // 플레이어 이동 중지
+    flag.style.visibility = 'visible';
+    joma.style.visibility = 'hidden';
+    bigjoma.style.visibility = 'visible';
+    bigjoma.style.width = '800px';
+    bigjoma.style.height = '700px';
+    bigjoma.style.left = '300px';
+    bigjoma.style.bottom = '-200px';
+    showGameScreen();
+    player.innerHTML = '<img src="img/죽은 짱구.png" alt="죽은 짱구">'; // 이미지 변경
+    destination.innerHTML = '<img src="img/목적지.png" alt="목적지">';
+    setTimeout(resetGame, 2500); // 2초 후 게임 초기화
+  }
+
+  // 깃발과 목적지 사이에 정지했을 때
+  function success() {
+    alert('성공!'); // 성공 메시지를 콘솔에 출력
+    joma.style.visibility = 'hidden';
+    // 오디오 중지
+    audioPlayer.pause();
+    setTimeout(() => {
+      document.body.style.backgroundColor = 'white';
+      player.style.visibility = 'hidden';
+      destination.innerHTML = '<img src="img/메모리미모리공주.png" alt="공주">';
+      gameScreen.style.backgroundImage = "url('img/배경.jpg')"; // 배경 이미지 변경
+      destination.style.width = '200px';
+      destination.style.height = '200px';
+      destination.style.right = '0%';
+      destination.style.bottom = '0%';
+    }, 500);
+    setTimeout(() => {
+        destination.style.visibility = 'hidden';
+        gameScreen.style.backgroundImage = "url('img/배경화면.png')"; // 배경 이미지 변경
+        setTimeout(() => {
+          gameScreen.style.backgroundImage = "url('img/끝.png')"; // 배경 이미지 변경
+        },1500)
+    },3000);
+    showGameScreen(); // 성공 메시지를 표시하고, 화면을 다시 보이게 함
+  }
+
+  // 플레이어 이동을 멈추는 함수
+  function stopPlayer() {
+    isMoving = false; // 자동 이동 멈춤
+    clearInterval(autoMoveInterval); // 자동 이동 인터벌 중지
+  }
+
+  // 플레이어 이동을 재개하는 함수
+  function resumePlayer() {
+    isMoving = true; // 자동 이동 재개
+    autoMoveInterval = setInterval(autoMovePlayer, 200); // 일정 시간 간격으로 자동 이동 반복
+  }
+
+  // 화면 숨기기 함수
+  function hideGameScreen() {
+    gameScreen.style.visibility = 'hidden'; // 게임 화면 숨기기
+    joma.style.visibility = 'hidden';
+    message.style.display = 'block'; // 메시지 표시
+    message1.style.display = 'block'; // 메시지 표시
+  }
+
+  // 화면 보이기 함수
+  function showGameScreen() {
+    gameScreen.style.visibility = 'visible'; // 게임 화면 보이기
+    message.style.display = 'none'; // 메시지 숨기기
+    message1.style.display = 'none'; // 메시지 숨기기
+  }
+
+  // 게임 초기화 함수
+  function resetGame() {
+    // 플레이어 위치 초기화
+    playerLeft = 150;
+    playerBottom = 50;
+    player.style.left = `${playerLeft}px`;
+    player.style.bottom = `${playerBottom}px`;
+    
+    flag.style.visibility = 'hidden'; // 깃발 숨기기
+    joma.style.visibility = 'visible';
+    bigjoma.style.visibility = 'hidden';
+    player.innerHTML = '<img src="img/짱구.png" alt="짱구">'; // 이미지 변경
+    destination.innerHTML = '<img src="img/목적지.png" alt="목적지">'; // 이미지 변경
+    // 게임 화면 다시 보이기
+    showGameScreen();
+    // 플레이어 자동 이동 재개
+    resumePlayer();
+  }
+
+  // 키 입력 이벤트 리스너 (스페이스 바)
+  document.addEventListener('keydown', function(event) {
+    if (event.key === ' ') {
+      console.log(playerLeft,  playerLeft + player.offsetWidth, flag.offsetLeft, destinationRight);
+      if (playerLeft >= 50 && playerLeft + player.offsetWidth < flag.offsetLeft) {
+        if (!isMoving) {
+          gameOver(); // 플레이어가 시작점과 깃발 사이에서 멈췄을 때 게임 오버
+        } else {
+          stopPlayer(); // 플레이어 이동 멈춤
+        }
+      } else if (playerLeft + player.offsetWidth >= flag.offsetLeft && playerLeft + player.offsetWidth <= destinationRight) {
+        if (isMoving) {
+          stopPlayer(); // 플레이어 이동 멈춤
+        } else {
+          success(); // 플레이어가 깃발과 목적지 사이에서 멈췄을 때 성공
+        }
+      } else {
+        if (isMoving) {
+          stopPlayer(); // 플레이어 이동 멈춤
+        } else {
+          resumePlayer();;
+        }
+      }
+    }
+  });
+
+  // 초기에 자동 이동 시작
+  resumePlayer(); // 자동 이동 시작
+</script>
+</body>
+</html>

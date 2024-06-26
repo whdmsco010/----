@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>piano로 나만의 BGM 만들기</title>
+    <link rel="stylesheet" href="piano.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400|Lora">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <style>
+        /* 토스트 메시지 스타일 */
+        #toastMessage {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 1000; /* 다른 요소 위에 나타나도록 설정 */
+            white-space: pre-line; /* 여러 줄 텍스트 처리 */
+        }
+
+        #toastMessage.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="welcome-message">PIANO</h1>
+    
+    <section>
+        <ul>
+            <li data-key="87" class="key"><span>W</span></li>
+            <li data-key="69" class="key"><span>E</span></li>
+            <li data-key="84" class="key"><span>T</span></li>
+            <li data-key="89" class="key"><span>Y</span></li>
+            <li data-key="85" class="key"><span>U</span></li>
+        </ul>  
+        <ul>
+            <li data-key="65" class="key"><span>A</span></li>
+            <li data-key="83" class="key"><span>S</span></li>
+            <li data-key="68" class="key"><span>D</span></li>
+            <li data-key="70" class="key"><span>F</span></li>
+            <li data-key="71" class="key"><span>G</span></li>
+            <li data-key="72" class="key"><span>H</span></li>
+            <li data-key="74" class="key"><span>J</span></li>
+            <li data-key="75" class="key"><span>K</span></li>
+        </ul>
+    </section>
+    
+    <button id="startRecord">Start Recording</button>
+    <button id="stopRecord" disabled>Stop Recording</button>
+    <button id="reChangeButton">Back</button>
+    <a id="uploadButton" style="display: none;">Upload Recording</a>
+    <button id="nextButton">Next</button>
+
+    <audio data-key="65" src="피아노 사운드/FX_piano01.mp3"></audio>
+    <audio data-key="87" src="피아노 사운드/FX_piano02.mp3"></audio>
+    <audio data-key="83" src="피아노 사운드/FX_piano03.mp3"></audio>
+    <audio data-key="69" src="피아노 사운드/FX_piano04.mp3"></audio>
+    <audio data-key="68" src="피아노 사운드/FX_piano05.mp3"></audio>
+    <audio data-key="70" src="피아노 사운드/FX_piano06.mp3"></audio>
+    <audio data-key="84" src="피아노 사운드/FX_piano07.mp3"></audio>
+    <audio data-key="71" src="피아노 사운드/FX_piano08.mp3"></audio>
+    <audio data-key="89" src="피아노 사운드/FX_piano09.mp3"></audio>
+    <audio data-key="72" src="피아노 사운드/FX_piano10.mp3"></audio>
+    <audio data-key="85" src="피아노 사운드/FX_piano11.mp3"></audio>
+    <audio data-key="74" src="피아노 사운드/FX_piano12.mp3"></audio>
+    <audio data-key="75" src="피아노 사운드/FX_piano13.mp3"></audio>
+    
+    <div id="toastMessage"></div> <!-- 토스트 메시지를 표시할 요소 -->
+
+    <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/recorder-js@1.0.4/dist/recorder.js"></script>
+    <script src="client.js"></script>
+
+    <script>
+        // 쿼리 파라미터를 가져오는 함수
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return Object.fromEntries(params.entries());
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = getQueryParams();
+            const name = params.name ? decodeURIComponent(params.name) : '00';
+            document.getElementById('welcome-message').textContent = `${name}님의 PIANO`;
+            
+            // 토스트 메시지 함수 호출
+            showToast(`${name}님, 환영합니다!
+            지금 녹음될 음원은 최종 스토리의 BGM으로 사용될 예정입니다.
+            최대한 길게 녹음해 주세요♡`, 15000); // 예: 30초 동안 띄우기
+        });
+
+        // 토스트 메시지 표시 함수
+        function showToast(message, duration) {
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toastMessage.classList.add('show');
+
+            // 지정된 시간(duration) 후에 토스트 메시지 숨김
+            setTimeout(() => {
+                toastMessage.classList.remove('show');
+            }, duration);
+        }
+
+        // 재가입
+        const pianoChangeButton = document.getElementById('reChangeButton');
+        pianoChangeButton.addEventListener('click', () => {
+            // 시작 페이지로
+            window.location.href = '/';
+        });
+
+        // 넥스트 버튼 클릭 이벤트 처리
+        const nextButton = document.getElementById('nextButton');
+        nextButton.addEventListener('click', () => {
+            // 넥스트 로직 추가
+            window.location.href = 'trickery.html';
+        });
+    </script>
+<script src="tjqj.js"></script>
+</body>
+</html>
