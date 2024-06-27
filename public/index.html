@@ -238,6 +238,7 @@
             audio.play();
         });
 
+        // 시작 버튼 클릭 시 이벤트 리스너 추가
         document.getElementById('start-button').addEventListener('click', async () => {
             const form = document.getElementById('signup-form');
             const formData = new FormData(form);
@@ -263,6 +264,7 @@
             }
         });
 
+        // 입력 폼 유효성 검사 함수
         const nameInput = document.getElementById('name');
         const usernameInput = document.getElementById('username');
         const studentCardInput = document.getElementById('studentCard');
@@ -275,13 +277,15 @@
                             studentCardInput.validity.valid &&
                             (instrumentInputs[0].checked || instrumentInputs[1].checked);
 
-            submitButton.disabled = !isValid;
+            submitButton.disabled = !isValid; // 입력 폼이 유효하지 않으면 제출 버튼 비활성화
         }
 
+        // 입력 필드의 값이 변경될 때 유효성 검사 함수 호출
         nameInput.addEventListener('input', checkFormValidity);
         usernameInput.addEventListener('input', checkFormValidity);
         studentCardInput.addEventListener('change', checkFormValidity);
 
+        // 라디오 버튼이 변경될 때 유효성 검사 함수 호출
         instrumentInputs.forEach(input => {
             input.addEventListener('change', checkFormValidity);
         });
