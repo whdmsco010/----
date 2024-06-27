@@ -30,7 +30,7 @@ function extractStudentID(imagePath) {
         Tesseract.recognize(
             imagePath,
             'eng',
-            { logger: m => console.log(m) } // Optional logger callback
+            { logger: m => console.log(m) }
         ).then(({ data: { text } }) => {
             // 추출된 텍스트에서 9자리 숫자만 추출
             const studentID = extractNumbersFromText(text);

@@ -29,7 +29,7 @@ const playSound = e => {
   if (audio) {
     audio.currentTime = 0; // 재생 시간을 초기화하여 반복 재생 가능하게 설정
     audio.play(); // 오디오 재생
-    key.classList.add("playing"); // 키 요소에 playing 클래스 추가 (스타일링을 위해)
+    key.classList.add("playing"); // 키 요소에 playing 클래스 추가
   }
 };
 
@@ -89,7 +89,7 @@ function startRecording() {
   mediaRecorder.onstop = () => {
     const blob = new Blob(recordedChunks, { type: 'audio/mp3' });
     const formData = new FormData();
-    formData.append('audio', blob, 'recording.mp3'); // recording.webm 파일 이름으로 설정
+    formData.append('audio', blob, 'recording.mp3'); // recording.mp3 파일 이름으로 설정
 
     uploadButton.style.display = 'block'; // 업로드 버튼 표시
   };
@@ -107,7 +107,7 @@ function stopRecording() {
 function uploadRecording() {
   const blob = new Blob(recordedChunks, { type: 'audio/mp3' });
   const formData = new FormData();
-  formData.append('audio', blob, 'recording.mp3'); // recording.webm 파일 이름으로 설정
+  formData.append('audio', blob, 'recording.mp3'); // recording.mp3 파일 이름으로 설정
 
   fetch('/upload', {
     method: 'POST',

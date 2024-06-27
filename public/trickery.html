@@ -50,7 +50,7 @@
     }
     .card img.front {
           display: none;
-          border: 7px solid white; /* cup 카드의 앞면 테두리를 흰색으로 설정 */
+          border: 7px solid white; /* 카드의 앞면 테두리를 흰색으로 설정 */
     }
 
     .card.joker img.front {
@@ -163,7 +163,7 @@
                   startGame();
                 }, 3000);
               } else {
-                alert("휴 이번만 봐준다:)");
+                alert("휴 이번만 봐준다~!");
                 showAllCards();
                 gameStarted = false; // 게임 종료 상태로 설정
                 setTimeout(() => {
@@ -177,18 +177,19 @@
 
       function startGame() {
         shuffling = true;
-        hideCards();
+        hideCards(); // 모든 카드 숨기기
         setTimeout(() => {
-          showSpecialCard();
+          showSpecialCard(); // 조커 카드 보여주기
           setTimeout(() => {
-            hideCards();
+            hideCards(); // 다시 모든 카드 숨기기
             setTimeout(() => {
-              shuffleCards();
+              shuffleCards(); // 카드 섞기 시작
             }, 1000);
           }, 3000);
         }, 1000);
       }
 
+      // 조커 카드 위치 설정 및 표시 함수
       function showSpecialCard() {
         hideCards(); // 모든 카드 숨기기
         specialCardPosition = Math.floor(Math.random() * 3);
@@ -196,18 +197,21 @@
           card.querySelector('.front').src = "img/fcard.jpg";
           card.classList.remove('joker'); // 이전에 추가된 'joker' 클래스 제거
         });
-        cards[specialCardPosition].querySelector('.front').src = "img/joker.png";
+        cards[specialCardPosition].querySelector('.front').src = "img/joker.png"; // 조커 카드 설정
         cards[specialCardPosition].classList.add('joker', 'show'); // joker 카드 표시 및 클래스 추가
       }
 
+      // 모든 카드 보여주는 함수
       function showAllCards() {
         cards.forEach(card => card.classList.add('show'));
       }
 
+      // 모든 카드 숨기는 함수
       function hideCards() {
         cards.forEach(card => card.classList.remove('show'));
       }
 
+      // 카드 섞기 함수
       function shuffleCards() {
         const shuffleCount = 20;
         let currentShuffle = 0;
@@ -218,11 +222,12 @@
             shuffling = false;
             return;
           }
-          swapCards();
+          swapCards(); // 카드 위치 교환
           currentShuffle++;
         }, 500);
       }
 
+      // 카드 위치 교환 함수
       function swapCards() {
         const positions = [0, 1, 2];
         const [pos1, pos2] = positions.sort(() => Math.random() - 0.5).slice(0, 2);
@@ -243,6 +248,7 @@
         cards[pos2] = temp;
       }
 
+      // 시도 횟수 업데이트 함수
       function updateAttemptCounter() {
         attemptCounter.textContent = `시도 횟수: ${attempts} / 5`;
       }

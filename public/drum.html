@@ -87,7 +87,7 @@
         // 토스트 메시지 함수 호출
         showToast(`${name}님, 환영합니다!
         지금 녹음될 음원은 최종 스토리의 BGM으로 사용될 예정입니다.
-        최대한 길게 녹음해 주세요♡`, 15000); // 예: 30초 동안 띄우기
+        최대한 길게 녹음해 주세요♡`, 15000); // 몇 초 동안 띄우기
     });
 
     // 토스트 메시지 표시 함수
@@ -105,14 +105,14 @@
     // 재가입
     const pianoChangeButton = document.getElementById('reChangeButton');
         pianoChangeButton.addEventListener('click', () => {
-            // 시작 페이지로
+            // 시작 페이지로 이동
             window.location.href = '/';
         });
 
         // 넥스트 버튼 클릭 이벤트 처리
         const nextButton = document.getElementById('nextButton');
         nextButton.addEventListener('click', () => {
-            // 넥스트 로직 추가
+            // 넥스트 페이지로 이동
             window.location.href = 'trickery.html';
         });
 </script>
